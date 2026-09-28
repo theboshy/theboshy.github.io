@@ -1,0 +1,163 @@
+---
+import Icon from '../ui/Icon.astro';
+import { localePath, useT, type Locale } from '../../lib/i18n';
+import { profile } from '../../content/profile';
+
+interface Props {
+  locale: Locale;
+}
+const { locale } = Astro.props;
+const t = useT(locale);
+const other: Locale = locale === 'en' ? 'es' : 'en';
+const items = [
+  ['work', t.nav.work],
+  ['lab', t.nav.lab],
+  ['stack', t.nav.stack],
+  ['how', t.nav.how],
+  ['contact', t.nav.contact],
+] as const;
+---
+
+<header data-nav class="nav fixed inset-x-0 top-0 z-50">
+  <div class="container-col flex h-14 items-center justify-between gap-4">
+    <a href={localePath(locale)} class="group flex items-center gap-2.5 no-underline" data-cursor="frame">
+      <span class="grid h-6 w-6 place-items-center rounded-[2px] border border-line-strong font-serif text-[13px] leading-none">
+        {profile.monogram}
+      </span>
+      <span class="text-[13px] font-medium">{profile.name}</span>
+    </a>
+
+    <nav class="hidden items-center gap-5 md:flex" aria-label="Sections">
+      {items.map(([id, label]) => (
+        <a href={`#${id}`} data-spy={id} class="nav-link font-mono text-[11.5px] text-text-tertiary no-underline">
+          {label}
+        </a>
+      ))}
+    </nav>
+
+    <div class="flex items-center gap-1">
+      <a
+        href={localePath(other)}
+        data-lang={other}
+        hreflang={other}
+        class="nav-icon font-mono text-[11px] no-underline"
+        data-cursor="frame"
+      >
+        <span class:list={[locale === 'en' ? 'text-text-primary' : 'text-text-disabled']}>EN</span>
+        <span class="text-text-disabled">/</span>
+        <span class:list={[locale === 'es' ? 'text-text-primary' : 'text-text-disabled']}>ES</span>
+        <span class="sr-only">{other === 'es' ? ': ver en español' : ': read in English'}</span>
+      </a>
+      <button type="button" class="nav-icon" data-theme-toggle data-cursor="frame" aria-label={t.nav.theme}>
+        <Icon name="sun" size={15} class="theme-sun" />
+        <Icon name="moon" size={15} class="theme-moon" />
+      </button>
+      {profile.cv && (
+        <a href={profile.cv} class="btn ml-2 hidden sm:inline-flex" download>
+          CV <Icon name="file-down" size={13} />
+        </a>
+      )}
+      <button type="button" class="nav-icon md:hidden" data-menu-toggle aria-label={t.nav.menu} aria-expanded="false">
+        <Icon name="menu" size={17} />
+      </button>
+    </div>
+  </div>
+
+  <div data-lang-banner hidden class="border-b border-line bg-surface-beige">
+    <div class="container-col flex h-9 items-center justify-between gap-3 font-mono text-[11.5px] text-text-tertiary">
+      <span>
+        {t.nav.langBanner}
+        <a href={localePath(other)} data-lang={other} class="link ml-1">
+          {t.nav.langBannerCta} →
+        </a>
+      </span>
+      <button type="button" data-dismiss aria-label="Dismiss" class="nav-icon">
+        <Icon name="x" size={14} />
+      </button>
+    </div>
+  </div>
+</header>
+
+<div data-sheet class="sheet fixed inset-0 z-[60] flex flex-col bg-surface-bg md:hidden">
+  <div class="container-col flex h-14 items-center justify-end">
+    <button type="button" class="nav-icon" data-menu-toggle aria-label={t.nav.menu}>
+      <Icon name="x" size={18} />
+    </button>
+  </div>
+  <nav class="container-col flex flex-col gap-3 pt-6">
+    {items.map(([id, label], i) => (
+      <a href={`#${id}`} class="flex items-baseline gap-3 font-serif text-[34px] no-underline">
+        <span class="font-mono text-[11px] text-text-disabled">0{i + 1}</span>
+        {label}
+      </a>
+    ))}
+  </nav>
+</div>
+
+<style>
+  .nav {
+    background: color-mix(in oklab, var(--surface-bg) 82%, transparent);
+    backdrop-filter: blur(8px);
+    border-bottom: 1px solid transparent;
+    transition: border-color 200ms;
+  }
+  .nav:global(.is-scrolled) {
+    border-color: var(--line-structure);
+  }
+  .nav-link {
+    position: relative;
+    padding-block: 4px;
+    transition: color 200ms;
+  }
+  .nav-link:hover,
+  .nav-link:global(.is-current) {
+    color: var(--text-primary);
+  }
+  .nav-link::after {
+    content: '';
+    position: absolute;
+    inset-inline: 0;
+    bottom: -2px;
+    height: 2px;
+    background: var(--highlight);
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform 300ms var(--ease-out-expo);
+  }
+  .nav-link:global(.is-current)::after {
+    transform: scaleX(1);
+  }
+  .nav-icon {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 3px;
+    min-width: 32px;
+    height: 32px;
+    padding-inline: 6px;
+    color: var(--text-secondary);
+    border-radius: 2px;
+    cursor: pointer;
+  }
+  .nav-icon:hover {
+    background: var(--surface-1);
+  }
+  :global([data-theme='light']) .theme-moon,
+  :global([data-theme='dark']) .theme-sun {
+    display: none;
+  }
+  .sheet {
+    opacity: 0;
+    pointer-events: none;
+    transform: translateY(-8px);
+    transition:
+      opacity 250ms var(--ease-out-expo),
+      transform 250ms var(--ease-out-expo);
+  }
+  .sheet:global([data-open]) {
+    opacity: 1;
+    pointer-events: auto;
+    transform: none;
+  }
+</style>

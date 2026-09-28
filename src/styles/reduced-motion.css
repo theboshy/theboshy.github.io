@@ -1,0 +1,29 @@
+/* ── Reduced motion ────────────────────────────────────────────── */
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+  .js .reveal {
+    opacity: 1;
+    transform: none;
+    transition: none;
+  }
+  .hl-bg {
+    transition: none;
+    --hl-scale: 1 !important;
+  }
+  .marquee-track,
+  .hero-in,
+  .hero-in .hl-bg,
+  .dot-grid,
+  .beam::after,
+  .ping {
+    animation: none;
+  }
+  .beam {
+    display: none;
+  }
+  .text-in > * {
+    animation: none;
+  }
+}

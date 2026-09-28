@@ -1,0 +1,66 @@
+/* ── Reveal ────────────────────────────────────────────────────── */
+.js .reveal {
+  opacity: 0;
+  transform: translateY(16px);
+  transition:
+    opacity 700ms var(--ease-standard),
+    transform 700ms var(--ease-standard);
+}
+.js .reveal.is-visible {
+  opacity: 1;
+  transform: none;
+}
+
+/* ── Hero: same entrance as .reveal, but CSS-only so it starts on first paint
+   (waiting for JS delayed the LCP by ~900 ms) ───────────────────── */
+@keyframes rise {
+  from {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+}
+@keyframes paint {
+  from {
+    transform: translateY(-52%) scaleX(0);
+  }
+}
+.hero-in {
+  animation: rise 700ms var(--ease-standard) both;
+}
+.hero-in .hl-bg {
+  animation: paint 450ms var(--ease-out-expo) both;
+  animation-delay: calc(var(--hl-i, 0) * 90ms + 350ms);
+}
+
+/* ── text-in: panel content rising into place ────────────────────────── */
+@keyframes text-in {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+.text-in > * {
+  animation: text-in 200ms var(--ease-out-expo) both;
+}
+.text-in > :nth-child(2) {
+  animation-delay: 50ms;
+}
+.text-in > :nth-child(3) {
+  animation-delay: 100ms;
+}
+
+/* ── Ping ──────────────────────────────────────────────────────── */
+@keyframes ping {
+  75%,
+  100% {
+    transform: scale(2.2);
+    opacity: 0;
+  }
+}
+.ping {
+  animation: ping 2s cubic-bezier(0, 0, 0.2, 1) infinite;
+}

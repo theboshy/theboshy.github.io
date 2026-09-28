@@ -1,0 +1,125 @@
+---
+import SectionHead from '../ui/SectionHead.astro';
+import IsoDiagram from '../diagrams/IsoDiagram.astro';
+import { labDiagram } from '../../content/diagrams';
+import { assistantCase as A, brandCase as B } from '../../content/lab';
+import { pick, useT, type Locale } from '../../lib/i18n';
+
+interface Props {
+  locale: Locale;
+}
+const { locale } = Astro.props;
+const t = useT(locale);
+const learnings = pick(A.learnings, locale);
+---
+
+<section id="lab" class="section container-col reveal">
+  <SectionHead eyebrow={t.lab.eyebrow} title={t.lab.title} />
+  <p class="mt-3 font-mono text-[11.5px] text-text-disabled">{t.lab.disclaimer}</p>
+
+  <!-- Caso A -->
+  <article class="mt-10">
+    <div class="cbox p-4 sm:p-5">
+      <div class="flex flex-wrap items-center gap-1.5">
+        <span class="chip gap-1.5">
+          <span class="relative inline-flex h-1.5 w-1.5">
+            <span class="ping absolute inset-0 rounded-full bg-accent-orange opacity-60"></span>
+            <span class="relative h-1.5 w-1.5 rounded-full bg-accent-orange"></span>
+          </span>
+          {A.status}
+        </span>
+        {A.tags.map((tag) => (
+          <span class="chip">{tag}</span>
+        ))}
+      </div>
+      <h3 class="mt-3 font-serif text-[24px] leading-tight">{pick(A.title, locale)}</h3>
+      <p class="mt-2 max-w-[64ch] text-[14px] text-text-tertiary">{pick(A.pitch, locale)}</p>
+    </div>
+
+    <div class="-mt-px">
+      <IsoDiagram
+        diagram={labDiagram}
+        locale={locale}
+        idleTitle={pick(A.title, locale)}
+        idleBody={t.loop.idleBody}
+        label={pick(A.title, locale)}
+      >
+        <button
+          type="button"
+          class="btn shrink-0"
+          data-iso-toggle
+          aria-pressed="false"
+          data-play-label={`▶ ${t.lab.play}`}
+          data-pause-label={`⏸ ${t.lab.pause}`}
+        >
+          <span data-label>⏸ {t.lab.pause}</span>
+        </button>
+      </IsoDiagram>
+    </div>
+
+    <p class="t-mono mt-10 text-text-disabled">{t.lab.decisions}</p>
+    <div class="grid-lines mt-3 grid grid-cols-1 md:grid-cols-3">
+      {A.decisions.map((d, i) => (
+        <div class="cbox cbox-hover flex flex-col gap-2 p-4" data-cursor="frame">
+          <span class="font-mono text-[11px] text-text-disabled">0{i + 1}</span>
+          <h4 class="text-[15px] font-medium leading-snug">{pick(d.title, locale)}</h4>
+          <p class="text-[13.5px] text-text-tertiary">{pick(d.body, locale)}</p>
+          <p class="mt-auto pt-2 font-mono text-[11px] text-text-disabled">
+            {t.lab.reverse}: <span class="text-text-tertiary">{pick(d.reverse, locale)}</span>
+          </p>
+        </div>
+      ))}
+    </div>
+
+    {learnings.length > 0 && (
+      <div class="mt-8">
+        <p class="t-mono text-text-disabled">{t.lab.learned}</p>
+        <ul class="mt-3 flex flex-col gap-2 text-[14px] text-text-tertiary">
+          {learnings.map((l) => (
+            <li>→ {l}</li>
+          ))}
+        </ul>
+      </div>
+    )}
+  </article>
+
+  <!-- Caso B -->
+  <article class="cbox cbox-hover group mt-12 grid gap-6 p-4 sm:grid-cols-[1fr_auto] sm:p-5" data-cursor="frame">
+    <div>
+      <div class="flex flex-wrap gap-1.5">
+        {B.tags.map((tag) => (
+          <span class="chip">{tag}</span>
+        ))}
+      </div>
+      <h3 class="mt-3 font-serif text-[24px] leading-tight">{pick(B.title, locale)}</h3>
+      <p class="mt-2 max-w-[56ch] text-[14px] text-text-tertiary">{pick(B.pitch, locale)}</p>
+    </div>
+    <div class="flex items-center gap-5 sm:flex-col sm:items-end sm:justify-center" aria-hidden="true">
+      <div class="flex">
+        {B.swatches.map((c, i) => (
+          <span
+            class="swatch h-11 w-11 rounded-[2px] border border-line"
+            style={`background:${c};--i:${i};z-index:${10 - i}`}
+          />
+        ))}
+      </div>
+      <p class="font-serif text-[28px] leading-none">
+        Aa <span class="font-mono text-[13px] text-text-tertiary">Aa</span>
+      </p>
+    </div>
+  </article>
+</section>
+
+<style>
+  .swatch {
+    margin-left: -22px;
+    transition: transform 300ms var(--ease-out-expo);
+    transition-delay: calc(var(--i) * 30ms);
+  }
+  .swatch:first-child {
+    margin-left: 0;
+  }
+  .group:hover .swatch {
+    transform: translateX(calc(var(--i) * 18px));
+  }
+</style>

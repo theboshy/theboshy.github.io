@@ -1,0 +1,44 @@
+---
+import SectionHead from '../ui/SectionHead.astro';
+import Icon from '../ui/Icon.astro';
+import { marquee, stackGroups } from '../../content/stack';
+import { pick, useT, type Locale } from '../../lib/i18n';
+
+interface Props {
+  locale: Locale;
+}
+const { locale } = Astro.props;
+const t = useT(locale);
+---
+
+<section id="stack" class="section container-col reveal">
+  <SectionHead eyebrow={t.stack.eyebrow} title={t.stack.title} body={t.stack.body} />
+
+  <div class="marquee cbox mt-10 py-4" aria-hidden="true">
+    <div class="marquee-track">
+      {[0, 1].map(() =>
+        marquee.map((m) => (
+          <span class="logo-item flex shrink-0 items-center gap-2 px-5 font-mono text-[12px]" title={m.name}>
+            {m.icon && <Icon name={m.icon} brand size={17} />}
+            {m.name}
+          </span>
+        )),
+      )}
+    </div>
+  </div>
+
+  <div class="grid-lines -mt-px grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3">
+    {stackGroups.map((g) => (
+      <div class="cbox cbox-hover flex flex-col gap-3 p-4" data-cursor="frame">
+        <h3 class="text-[15px] font-medium">{pick(g.title, locale)}</h3>
+        <ul class="flex flex-col gap-1 text-[13.5px] text-text-secondary">
+          {g.items.map((i) => (
+            <li>{i}</li>
+          ))}
+        </ul>
+        <p class="mt-auto font-mono text-[11px] text-text-disabled">{pick(g.note, locale)}</p>
+      </div>
+    ))}
+  </div>
+  <p class="sr-only">{marquee.map((m) => m.name).join(', ')}</p>
+</section>

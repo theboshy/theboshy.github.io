@@ -1,0 +1,32 @@
+/* ── Highlight marker ──────────────────────────────────────── */
+.hl {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  white-space: nowrap;
+}
+.hl-bg {
+  position: absolute;
+  inset-inline: -0.04em;
+  top: 50%;
+  height: 0.76em;
+  transform: translateY(-52%) scaleX(var(--hl-scale, 1));
+  transform-origin: left center;
+  background: var(--highlight);
+  transition: transform 450ms var(--ease-out-expo);
+  transition-delay: calc(var(--hl-i, 0) * 90ms + 150ms);
+}
+.hl-gap > .hl-bg {
+  /* the marker also covers the space between words */
+  inset-inline-end: -0.28em;
+}
+.hl > .relative {
+  position: relative;
+}
+[data-theme='dark'] .hl > .relative {
+  color: #222220;
+}
+.js .reveal:not(.is-visible) .hl-bg,
+.js [data-hl-wait]:not(.is-visible) .hl-bg {
+  --hl-scale: 0;
+}

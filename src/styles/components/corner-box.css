@@ -1,0 +1,78 @@
+/* ── CornerBox ─────────────────────────────────────────────────── */
+.cbox {
+  position: relative;
+  border: 1px solid var(--line-structure);
+  background: var(--surface-bg);
+  border-radius: 2px;
+  isolation: isolate;
+}
+/* diagonal stripes on hover */
+.cbox-hover::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  opacity: 0;
+  pointer-events: none;
+  background: repeating-linear-gradient(
+    315deg,
+    var(--surface-bg),
+    var(--surface-bg) 2px,
+    color-mix(in oklab, var(--line-strong) 14%, var(--surface-bg)) 4px,
+    var(--surface-bg) 4px
+  );
+  transition: opacity 180ms ease-out;
+}
+/* Bracket corners: one definition shared by cards, buttons and the cursor */
+.cbox-hover::before,
+.corners::before,
+.btn-wrap::before {
+  --c: var(--line-strong);
+  --s: 8px;
+  --w: 1.5px;
+  content: '';
+  position: absolute;
+  inset: -3px;
+  z-index: 20;
+  pointer-events: none;
+  opacity: 0;
+  background:
+    linear-gradient(var(--c), var(--c)) top left / var(--s) var(--w),
+    linear-gradient(var(--c), var(--c)) top left / var(--w) var(--s),
+    linear-gradient(var(--c), var(--c)) top right / var(--s) var(--w),
+    linear-gradient(var(--c), var(--c)) top right / var(--w) var(--s),
+    linear-gradient(var(--c), var(--c)) bottom left / var(--s) var(--w),
+    linear-gradient(var(--c), var(--c)) bottom left / var(--w) var(--s),
+    linear-gradient(var(--c), var(--c)) bottom right / var(--s) var(--w),
+    linear-gradient(var(--c), var(--c)) bottom right / var(--w) var(--s);
+  background-repeat: no-repeat;
+  transition:
+    opacity var(--dur-hover),
+    inset var(--dur-hover) var(--ease-out-expo);
+}
+.cbox-hover:hover::before,
+.cbox-hover:focus-visible::before,
+.cbox-hover:focus-within::before,
+.cbox-hover.is-active::before,
+.corners.is-active::before {
+  opacity: 1;
+  inset: -5px;
+}
+.cbox-hover:hover::after,
+.cbox-hover:focus-visible::after,
+.cbox-hover.is-active::after {
+  opacity: 1;
+}
+.cbox-hover .arrow {
+  transition: transform var(--dur-hover) var(--ease-out-expo);
+}
+.cbox-hover:hover .arrow {
+  transform: translateX(2px);
+}
+/* shared 1px borders: adjacent boxes overlap by 1px so lines never double up */
+.grid-lines > * {
+  margin: -1px 0 0 -1px;
+}
+.grid-lines {
+  padding: 1px 0 0 1px;
+}

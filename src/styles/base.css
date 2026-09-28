@@ -1,0 +1,95 @@
+/* ── Base ──────────────────────────────────────────────────────── */
+html {
+  overflow-x: clip;
+  background: var(--surface-bg);
+  scroll-behavior: smooth;
+  scroll-padding-top: 72px;
+}
+body {
+  background: var(--surface-bg);
+  color: var(--text-primary);
+  font-family: var(--font-sans);
+  font-size: 15px;
+  line-height: 1.5;
+  letter-spacing: -0.075px;
+  font-variant-numeric: ordinal;
+  -webkit-font-smoothing: antialiased;
+  /* clip, not hidden: no scroll container is created, and iOS can't pan sideways */
+  overflow-x: clip;
+}
+::selection {
+  background: var(--highlight);
+  color: #222220;
+}
+:focus-visible {
+  outline: 2px solid var(--text-link);
+  outline-offset: 2px;
+}
+a {
+  color: inherit;
+}
+
+/* ── Type ──────────────────────────────────────────────────────── */
+.t-display {
+  font-family: var(--font-serif);
+  font-weight: 450;
+  font-size: clamp(40px, 7vw, 60px);
+  line-height: 1.04;
+  letter-spacing: -0.02em;
+  text-wrap: balance;
+}
+.t-h2 {
+  font-family: var(--font-serif);
+  font-weight: 500;
+  font-size: 32px;
+  line-height: 1.15;
+  text-wrap: balance;
+}
+.t-body {
+  color: var(--text-tertiary);
+  max-width: 64ch;
+}
+.t-mono {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  line-height: 1.4;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+.link {
+  color: var(--text-link);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  text-decoration-thickness: 1px;
+}
+
+/* ── Layout ────────────────────────────────────────────────────── */
+.container-col {
+  margin-inline: auto;
+  width: 100%;
+  padding-inline: 16px;
+}
+@media (min-width: 640px) {
+  .container-col {
+    padding-inline: 32px;
+  }
+}
+@media (min-width: 768px) {
+  .container-col {
+    padding-inline: 0;
+    max-width: 680px;
+  }
+}
+@media (min-width: 1280px) {
+  .container-col {
+    max-width: 840px;
+  }
+}
+.section {
+  padding-top: 80px;
+}
+@media (min-width: 768px) {
+  .section {
+    padding-top: 120px;
+  }
+}

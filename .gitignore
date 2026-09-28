@@ -1,0 +1,8 @@
+.content-denylist
+node_modules/
+dist/
+.astro/
+.env
+
+# Local only: private notes and original planning docs
+.private/

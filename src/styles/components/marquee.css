@@ -1,0 +1,25 @@
+/* ── Marquee ───────────────────────────────────────────────────── */
+.marquee {
+  overflow: hidden;
+  mask-image: linear-gradient(90deg, transparent, #000 64px, #000 calc(100% - 64px), transparent);
+}
+.marquee-track {
+  display: flex;
+  width: max-content;
+  animation: marquee 40s linear infinite;
+}
+.marquee:hover .marquee-track {
+  animation-play-state: paused;
+}
+@keyframes marquee {
+  to {
+    transform: translateX(-50%);
+  }
+}
+.logo-item {
+  color: var(--text-disabled);
+  transition: color var(--dur-hover);
+}
+.logo-item:hover {
+  color: var(--text-primary);
+}

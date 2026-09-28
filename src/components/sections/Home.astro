@@ -1,0 +1,30 @@
+---
+import Hero from './Hero.astro';
+import Loop from './Loop.astro';
+import Work from './Work.astro';
+import Lab from './Lab.astro';
+import Stack from './Stack.astro';
+import Numbers from './Numbers.astro';
+import HowIWork from './HowIWork.astro';
+import Contact from './Contact.astro';
+import { assertContent, type Locale } from '../../lib/i18n';
+import { experience } from '../../content/experience';
+import { assistantCase, brandCase } from '../../content/lab';
+import { principles } from '../../content/principles';
+import { loopDiagram, labDiagram } from '../../content/diagrams';
+
+interface Props {
+  locale: Locale;
+}
+const { locale } = Astro.props;
+assertContent([experience, assistantCase, brandCase, principles, loopDiagram, labDiagram]);
+---
+
+<Hero locale={locale} />
+<Loop locale={locale} />
+<Work locale={locale} />
+<Lab locale={locale} />
+<Stack locale={locale} />
+<Numbers locale={locale} />
+<HowIWork locale={locale} />
+<Contact locale={locale} />

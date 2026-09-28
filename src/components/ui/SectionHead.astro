@@ -1,0 +1,19 @@
+---
+import Highlight from './Highlight.astro';
+
+interface Props {
+  eyebrow?: string;
+  title: string;
+  body?: string;
+  as?: 'h1' | 'h2';
+}
+const { eyebrow, title, body, as: Tag = 'h2' } = Astro.props;
+---
+
+<div class="flex flex-col items-start gap-4">
+  {eyebrow && <p class="t-mono text-text-disabled">{eyebrow}</p>}
+  <Tag class="t-h2 text-text-primary">
+    <Highlight text={title} />
+  </Tag>
+  {body && <p class="t-body">{body}</p>}
+</div>

@@ -1,0 +1,33 @@
+---
+import Icon from './Icon.astro';
+
+interface Props {
+  href?: string;
+  variant?: 'primary' | 'secondary';
+  icon?: string;
+  brandIcon?: string;
+  trailing?: string;
+  external?: boolean;
+  beam?: boolean;
+  [key: string]: unknown;
+}
+const { href, variant = 'secondary', icon, brandIcon, trailing, external, beam, ...rest } = Astro.props;
+const Tag = href ? 'a' : 'button';
+const ext = external ? { target: '_blank', rel: 'noopener noreferrer' } : {};
+---
+
+<span class="btn-wrap" data-cursor="frame">
+  <Tag
+    href={href}
+    class:list={['btn', variant === 'primary' && 'btn-primary']}
+    data-cursor-ext={external ? '' : undefined}
+    {...ext}
+    {...rest}
+  >
+    {beam && <span class="beam" aria-hidden="true" />}
+    {brandIcon && <Icon name={brandIcon} brand size={14} />}
+    {icon && <Icon name={icon} size={14} />}
+    <slot />
+    {trailing && <Icon name={trailing} size={13} class="arrow opacity-70" />}
+  </Tag>
+</span>

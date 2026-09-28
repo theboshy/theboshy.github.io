@@ -1,0 +1,82 @@
+/* Design tokens.
+   Dark mode is its own set of steps, not an automatic inversion. */
+
+:root {
+  --surface-bg: #f6f6f3;
+  --surface-1: #edede8;
+  --surface-2: #e5e5e1;
+  --surface-beige: #f1ede1;
+  --surface-code: #333333;
+  --line-structure: #cfcfc9;
+  --line-divider: #bebeb6;
+  --line-strong: #404039;
+  --text-primary: #222220;
+  --text-secondary: #3d3d38;
+  --text-tertiary: #6b6b66;
+  --text-disabled: #70706a; /* lightest gray that passes AA (4.6:1) on --surface-bg */
+  --text-link: #4f39f6;
+  --highlight: #fbff7a;
+  --cta: #fbff81;
+  --accent-orange: #c17e2e;
+  --accent-pink: #d05376;
+  --accent-blue: #438aa5;
+  --accent-green: #538a2e;
+  --accent-violet: #8a7fe0;
+  --shadow-button: 0 4px 8px 0 rgb(0 0 0 / 0.05), 0 4px 4px 0 rgb(0 0 0 / 0.03);
+
+  --ease-standard: cubic-bezier(0.25, 0.1, 0.25, 1);
+  --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+  --dur-hover: 200ms;
+
+  color-scheme: light;
+}
+
+[data-theme='dark'] {
+  --surface-bg: #121212;
+  --surface-1: #191919;
+  --surface-2: #212121;
+  --surface-beige: #1c1b17;
+  --surface-code: #1a1a1a;
+  --line-structure: #ffffff1f;
+  --line-divider: #ffffff29;
+  --line-strong: #8c8c8c;
+  --text-primary: #ebebeb;
+  --text-secondary: #dedede;
+  --text-tertiary: #b3b3b3cc;
+  --text-disabled: #82827c; /* AA 4.8:1 on dark --surface-bg */
+  --text-link: #9d8fff;
+  --accent-orange: #d8964a;
+  --accent-pink: #e0708f;
+  --accent-blue: #5ba5c0;
+  --accent-green: #6fa84a;
+  --accent-violet: #a79ff0;
+  --shadow-button: 0 4px 8px 0 rgb(0 0 0 / 0.3);
+  color-scheme: dark;
+}
+
+@theme {
+  --font-sans: 'Inter Variable', ui-sans-serif, system-ui, sans-serif;
+  --font-serif: 'Newsreader Variable', ui-serif, Georgia, serif;
+  --font-mono: 'Geist Mono Variable', ui-monospace, SFMono-Regular, Menlo, monospace;
+
+  --color-surface-bg: var(--surface-bg);
+  --color-surface-1: var(--surface-1);
+  --color-surface-2: var(--surface-2);
+  --color-surface-beige: var(--surface-beige);
+  --color-surface-code: var(--surface-code);
+  --color-line: var(--line-structure);
+  --color-line-divider: var(--line-divider);
+  --color-line-strong: var(--line-strong);
+  --color-text-primary: var(--text-primary);
+  --color-text-secondary: var(--text-secondary);
+  --color-text-tertiary: var(--text-tertiary);
+  --color-text-disabled: var(--text-disabled);
+  --color-text-link: var(--text-link);
+  --color-highlight: var(--highlight);
+  --color-cta: var(--cta);
+  --color-accent-orange: var(--accent-orange);
+  --color-accent-pink: var(--accent-pink);
+  --color-accent-blue: var(--accent-blue);
+  --color-accent-green: var(--accent-green);
+  --color-accent-violet: var(--accent-violet);
+}

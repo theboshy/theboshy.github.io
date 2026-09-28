@@ -1,0 +1,31 @@
+---
+import SectionHead from '../ui/SectionHead.astro';
+import Button from '../ui/Button.astro';
+import IsoDiagram from '../diagrams/IsoDiagram.astro';
+import { loopDiagram } from '../../content/diagrams';
+import { useT, type Locale } from '../../lib/i18n';
+import { stripHighlight } from '../../lib/highlight';
+
+interface Props {
+  locale: Locale;
+}
+const { locale } = Astro.props;
+const t = useT(locale);
+---
+
+<section id="loop" class="section container-col reveal">
+  <SectionHead eyebrow={t.loop.eyebrow} title={t.loop.title} body={t.loop.body} />
+  <div class="mt-8">
+    <IsoDiagram
+      diagram={loopDiagram}
+      locale={locale}
+      idleTitle={t.loop.idleTitle}
+      idleBody={t.loop.idleBody}
+      label={stripHighlight(t.loop.title)}
+    >
+      <Button href="#how" trailing="arrow-right">
+        {t.loop.cta}
+      </Button>
+    </IsoDiagram>
+  </div>
+</section>

@@ -1,0 +1,242 @@
+---
+// Conditional section: each block renders only if its data passes the inclusion rule.
+import SectionHead from '../ui/SectionHead.astro';
+import { careerGantt, careerStats, ganttPasses } from '../../lib/data/career';
+import { getStackOverflow } from '../../lib/data/stackoverflow';
+import { profile } from '../../content/profile';
+import { useT, type Locale } from '../../lib/i18n';
+
+interface Props {
+  locale: Locale;
+}
+const { locale } = Astro.props;
+const t = useT(locale);
+const stats = careerStats();
+const so = await getStackOverflow();
+const gantt = ganttPasses() ? careerGantt() : null;
+const fmt = new Intl.DateTimeFormat(locale, { month: 'short', year: 'numeric', timeZone: 'UTC' });
+const date = (ym: string) => fmt.format(new Date(`${ym}-01T00:00:00Z`));
+const n = new Intl.NumberFormat(locale);
+
+type Badges = { gold: number; silver: number; bronze: number };
+interface Tile {
+  value: string;
+  label: string;
+  href?: string;
+  badges?: Badges;
+}
+
+const tiles: Tile[] = [
+  { value: `${stats.years}+`, label: t.numbers.years },
+  { value: String(stats.companies), label: t.numbers.companies },
+  { value: String(stats.industries), label: t.numbers.industries },
+];
+if (so.reputation > 0) {
+  tiles.push({
+    value: n.format(so.reputation),
+    label: t.numbers.soRep,
+    href: profile.stackoverflow,
+    badges: so.badges,
+  });
+}
+const BADGE_COLORS: Record<keyof Badges, string> = { gold: '#c9a227', silver: '#a8a8a8', bronze: '#b07a4a' };
+---
+
+<section id="numbers" class="section container-col reveal">
+  <SectionHead eyebrow={t.numbers.eyebrow} title={t.numbers.title} body={t.numbers.body} />
+
+  <div class="grid-lines mt-10 grid grid-cols-2 md:grid-cols-4">
+    {tiles.map((tile) => {
+      const Tag = tile.href ? 'a' : 'div';
+      return (
+        <Tag
+          href={tile.href}
+          target={tile.href ? '_blank' : undefined}
+          rel={tile.href ? 'noopener noreferrer' : undefined}
+          class:list={['cbox flex flex-col gap-1 p-4 no-underline', tile.href && 'cbox-hover']}
+          data-cursor={tile.href ? 'frame' : undefined}
+        >
+          <span class="text-[34px] font-semibold leading-none tracking-[-0.02em] text-text-primary">{tile.value}</span>
+          <span class="text-[12.5px] text-text-tertiary">{tile.label}</span>
+          {tile.badges && (
+            <span
+              class="mt-1 flex items-center gap-2.5 font-mono text-[11px] text-text-disabled"
+              title={t.numbers.soBadges}
+            >
+              {(Object.keys(BADGE_COLORS) as (keyof Badges)[]).map((kind) => (
+                <span class="flex items-center gap-1">
+                  <span class="h-2 w-2 rounded-full" style={`background:${BADGE_COLORS[kind]}`} />
+                  {tile.badges![kind]}
+                </span>
+              ))}
+            </span>
+          )}
+        </Tag>
+      );
+    })}
+  </div>
+
+  {gantt && (
+    <figure class="cbox gantt-fig -mt-px p-4 sm:p-5">
+      <figcaption class="flex items-baseline justify-between gap-3">
+        <span class="text-[13px] font-medium">{t.numbers.careerTitle}</span>
+        <span class="font-mono text-[11px] text-text-disabled">{t.numbers.careerSub}</span>
+      </figcaption>
+
+      <div class="gantt mt-5" aria-hidden="true">
+        <div class="gantt-row gantt-axis">
+          <span />
+          <div class="relative h-4">
+            {gantt.years.map((y) => (
+              <span
+                class="absolute -translate-x-1/2 font-mono text-[10px] text-text-disabled"
+                style={`left:${y.left}%`}
+              >
+                {`'${String(y.year).slice(2)}`}
+              </span>
+            ))}
+          </div>
+        </div>
+        {gantt.rows.map((row) => (
+          <div class="gantt-row">
+            <span class="truncate text-[12px] text-text-secondary">{row.company}</span>
+            <div class="gantt-track">
+              {gantt.years.map((y) => (
+                <span class="gantt-grid" style={`left:${y.left}%`} />
+              ))}
+              {row.segments.map((s) => (
+                <span
+                  class:list={['gantt-bar', s.current && 'is-current', s.left + s.width > 60 && 'tip-end']}
+                  style={`left:${s.left}%;width:calc(${s.width}% - 2px)`}
+                >
+                  <span class="gantt-tip">
+                    <span class="block text-text-primary">{s.title}</span>
+                    <span class="block text-text-disabled">
+                      {date(s.start)} → {s.current ? t.work.now : date(s.end)}
+                    </span>
+                  </span>
+                </span>
+              ))}
+            </div>
+          </div>
+        ))}
+      </div>
+
+      <table class="sr-only">
+        <caption>{t.numbers.careerTitle}</caption>
+        <thead>
+          <tr>
+            <th scope="col">{t.numbers.colCompany}</th>
+            <th scope="col">{t.numbers.colRole}</th>
+            <th scope="col">{t.numbers.colStart}</th>
+            <th scope="col">{t.numbers.colEnd}</th>
+          </tr>
+        </thead>
+        <tbody>
+          {gantt.rows.flatMap((row) =>
+            row.segments.map((s) => (
+              <tr>
+                <td>{row.company}</td>
+                <td>{s.title}</td>
+                <td>{date(s.start)}</td>
+                <td>{s.current ? t.work.now : date(s.end)}</td>
+              </tr>
+            )),
+          )}
+        </tbody>
+      </table>
+    </figure>
+  )}
+</section>
+
+<style>
+  .gantt {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+  .gantt-row {
+    display: grid;
+    grid-template-columns: minmax(90px, 170px) 1fr;
+    align-items: center;
+    gap: 12px;
+  }
+  .gantt-track {
+    position: relative;
+    height: 20px;
+  }
+  .gantt-grid {
+    position: absolute;
+    top: -3px;
+    bottom: -3px;
+    width: 1px;
+    background: var(--line-structure);
+    opacity: 0.6;
+  }
+  .gantt-bar {
+    position: absolute;
+    top: 3px;
+    height: 14px;
+    min-width: 6px;
+    border-radius: 4px;
+    background: var(--text-tertiary);
+    cursor: default;
+    outline-offset: 2px;
+    transition: background 200ms;
+  }
+  .gantt-bar.is-current {
+    background: repeating-linear-gradient(135deg, var(--text-primary) 0 3px, var(--text-tertiary) 3px 6px);
+  }
+  .gantt-bar:hover,
+  .gantt-bar:focus-visible {
+    background: var(--text-primary);
+  }
+  .gantt-tip {
+    position: absolute;
+    bottom: calc(100% + 8px);
+    left: 50%;
+    z-index: 30;
+    translate: -50% 4px;
+    padding: 6px 8px;
+    border: 1px solid var(--line-structure);
+    border-radius: 2px;
+    background: var(--surface-bg);
+    box-shadow: var(--shadow-button);
+    font-family: var(--font-mono);
+    font-size: 11px;
+    line-height: 1.5;
+    white-space: nowrap;
+    opacity: 0;
+    pointer-events: none;
+    transition:
+      opacity 150ms,
+      translate 200ms var(--ease-out-expo);
+  }
+  /* Bars near the right edge open their tooltip leftwards so it stays on screen. */
+  .tip-end .gantt-tip {
+    left: auto;
+    right: 0;
+    translate: 0 4px;
+  }
+  .tip-end:hover .gantt-tip,
+  .tip-end:focus-visible .gantt-tip {
+    translate: 0 0;
+  }
+  .gantt-fig {
+    overflow-x: clip;
+  }
+  .gantt-bar:hover .gantt-tip,
+  .gantt-bar:focus-visible .gantt-tip {
+    opacity: 1;
+    translate: -50% 0;
+  }
+  @media (max-width: 639px) {
+    .gantt-row {
+      grid-template-columns: 1fr;
+      gap: 2px;
+    }
+    .gantt-axis > span:first-child {
+      display: none;
+    }
+  }
+</style>

@@ -1,0 +1,43 @@
+---
+import SectionHead from '../ui/SectionHead.astro';
+import { adrSample, principles } from '../../content/principles';
+import { pick, useT, type Locale } from '../../lib/i18n';
+import { highlightAdr } from '../../lib/adr';
+
+interface Props {
+  locale: Locale;
+}
+const { locale } = Astro.props;
+const t = useT(locale);
+---
+
+<section id="how" class="section container-col reveal">
+  <SectionHead eyebrow={t.how.eyebrow} title={t.how.title} />
+
+  <div class="mt-10 grid gap-8 xl:grid-cols-[minmax(0,1fr)_minmax(0,360px)]">
+    <ol class="border-t border-line">
+      {principles.map((p, i) => (
+        <li class="cbox-hover relative flex gap-4 border-b border-line px-2 py-4">
+          <span class="pt-1 font-mono text-[11px] text-text-disabled">{String(i + 1).padStart(2, '0')}</span>
+          <div>
+            <h3 class="font-serif text-[20px] leading-snug">{pick(p.title, locale)}</h3>
+            <p class="mt-1 text-[14px] text-text-tertiary">{pick(p.body, locale)}</p>
+          </div>
+        </li>
+      ))}
+    </ol>
+
+    <figure class="self-start">
+      <pre class="adr overflow-x-auto rounded-[2px] bg-surface-code p-4 font-mono text-[11px] leading-[1.6] text-[#e9e7df] sm:text-[11.5px]"><code set:html={highlightAdr(adrSample)} /></pre>
+      <figcaption class="mt-2 font-mono text-[11px] text-text-disabled">{t.how.adrCaption}</figcaption>
+    </figure>
+  </div>
+</section>
+
+<style>
+  /* Fallback if a line ever overflows: a discreet scrollbar instead of the system one. */
+  .adr {
+    scrollbar-width: thin;
+    scrollbar-color: #ffffff30 transparent;
+  }
+</style>

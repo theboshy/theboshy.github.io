@@ -1,0 +1,14 @@
+/* ── Timeline ──────────────────────────────────────────────────── */
+.tl-line {
+  transform-origin: top;
+  transform: scaleY(var(--tl-progress, 1));
+}
+.tl-dot {
+  transition:
+    background 300ms,
+    border-color 300ms;
+}
+.tl-item.is-lit .tl-dot {
+  background: var(--text-primary);
+  border-color: var(--text-primary);
+}

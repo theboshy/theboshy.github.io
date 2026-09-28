@@ -1,0 +1,37 @@
+---
+import Highlight from '../ui/Highlight.astro';
+import Button from '../ui/Button.astro';
+import Icon from '../ui/Icon.astro';
+import { profile } from '../../content/profile';
+import { useT, type Locale } from '../../lib/i18n';
+
+interface Props {
+  locale: Locale;
+}
+const t = useT(Astro.props.locale);
+---
+
+<section id="contact" class="section container-col reveal">
+  <h2 class="font-serif text-[clamp(40px,6vw,56px)] font-[450] leading-[1.05]">
+    <Highlight text={t.contact.title} />
+  </h2>
+  <p class="t-body mt-4">{t.contact.body}</p>
+
+  <div class="-ml-1 mt-6 flex flex-wrap items-center gap-1">
+    <span class="btn-wrap" data-cursor="frame">
+      <button type="button" class="btn btn-primary" data-copy={profile.email} data-copied={t.contact.copied}>
+        <Icon name="copy" size={14} />
+        <span data-label>{profile.email}</span>
+      </button>
+    </span>
+    <Button href={profile.github} brandIcon="github" external>
+      GitHub
+    </Button>
+    <Button href={profile.linkedin} trailing="arrow-up-right" external>
+      LinkedIn
+    </Button>
+    <Button href={profile.stackoverflow} brandIcon="stackoverflow" external>
+      Stack Overflow
+    </Button>
+  </div>
+</section>

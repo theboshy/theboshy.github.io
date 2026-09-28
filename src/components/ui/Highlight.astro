@@ -1,0 +1,23 @@
+---
+// Renders `[[...]]` markup as the yellow highlighter behind words (see lib/highlight.ts).
+import { parseHighlight } from '../../lib/highlight';
+
+interface Props {
+  text: string;
+}
+const parts = parseHighlight(Astro.props.text);
+---
+
+{parts.map((p) =>
+  p.kind === 'mark' ? (
+    <>
+      <span class:list={['hl', p.gap && 'hl-gap']} style={`--hl-i:${p.index}`}>
+        <span class="hl-bg" aria-hidden="true" />
+        <span class="relative">{p.text}</span>
+      </span>
+      {p.gap && ' '}
+    </>
+  ) : (
+    p.text
+  ),
+)}

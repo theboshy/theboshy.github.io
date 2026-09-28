@@ -1,0 +1,19 @@
+/* ── Hero dot grid ─────────────────────────────────────────── */
+.dot-grid {
+  position: absolute;
+  inset: -48px 0;
+  pointer-events: none;
+  background-image: radial-gradient(var(--line-structure) 1px, transparent 1px);
+  background-size: 24px 24px;
+  mask-image: radial-gradient(ellipse 70% 60% at 30% 45%, #000 20%, transparent 75%);
+  opacity: 0.8;
+  animation: grid-drift 24s linear infinite;
+}
+@keyframes grid-drift {
+  from {
+    background-position: 0 0;
+  }
+  to {
+    background-position: 24px 48px;
+  }
+}

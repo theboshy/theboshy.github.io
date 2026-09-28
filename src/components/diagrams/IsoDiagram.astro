@@ -1,0 +1,226 @@
+---
+// Interactive isometric diagram. The SVG is fully rendered at build time from data
+// (see lib/iso-layout.ts); scripts/iso adds hover, focus and the animated particle.
+import type { Accent, Diagram } from '../../content/diagrams';
+import { layoutDiagram } from '../../lib/iso-layout';
+import { lucideInner } from '../../lib/icons';
+import { pick, type Locale } from '../../lib/i18n';
+
+interface Props {
+  diagram: Diagram;
+  locale: Locale;
+  idleTitle: string;
+  idleBody: string;
+  label: string;
+}
+const { diagram, locale, idleTitle, idleBody, label } = Astro.props;
+
+// Both layouts ship in the HTML and CSS picks one: no layout shift, no JS needed to choose.
+const variants = [
+  { key: 'desktop', cls: 'hidden md:block', ...layoutDiagram(diagram, 'desktop') },
+  { key: 'mobile', cls: 'md:hidden', ...layoutDiagram(diagram, 'mobile') },
+];
+const accentVar = (a: Accent) => (a === 'neutral' ? 'var(--text-tertiary)' : `var(--accent-${a})`);
+/** Labels sit this far below the box's lowest corner. */
+const LABEL_OFFSET = 20;
+---
+
+<div
+  class="iso-root"
+  data-iso-root
+  data-diagram={diagram.id}
+  data-particle={diagram.particle ? JSON.stringify(diagram.particle) : undefined}
+>
+  <div class="relative">
+    {variants.map((v) => (
+      <svg
+        class:list={['iso-svg w-full h-auto select-none', v.cls]}
+        viewBox={v.viewBox}
+        style={v.key === 'desktop' ? 'max-height:520px' : undefined}
+        role="group"
+        aria-label={label}
+        data-iso-svg
+      >
+        {v.floor && <path d={v.floor} class="iso-floor" />}
+        <g class="iso-edges">
+          {v.edges.map((e) => (
+            <path class="iso-edge" d={e.d} data-from={e.from} data-to={e.to} />
+          ))}
+        </g>
+        {v.nodes.map(({ node: n, box: g }) => (
+          <g
+            class="iso-node"
+            data-node={n.id}
+            data-cursor="frame"
+            tabindex="0"
+            role="button"
+            aria-label={pick(n.title, locale)}
+            data-title={pick(n.title, locale)}
+            data-body={pick(n.body, locale)}
+            style={`--accent:${accentVar(n.accent)}`}
+          >
+            <path class="iso-shadow" d={g.shadow} />
+            <g class="iso-float">
+              <g class="iso-lift">
+                <path class="iso-left" d={g.left} />
+                <path class="iso-right" d={g.right} />
+                <path class="iso-top" d={g.top} />
+                <g class="iso-icon" transform={g.iconMatrix} set:html={lucideInner(n.icon)} />
+              </g>
+            </g>
+          </g>
+        ))}
+        <g class="iso-labels" aria-hidden="true">
+          {v.nodes.map(({ node: n, box: g }) => (
+            <text
+              class="iso-label"
+              data-label-for={n.id}
+              x={g.labelAnchor.x}
+              y={g.labelAnchor.y + LABEL_OFFSET}
+              text-anchor="middle"
+            >
+              {pick(n.label, locale)}
+            </text>
+          ))}
+        </g>
+        <g class="iso-particle" aria-hidden="true" opacity="0">
+          <circle r="7" class="iso-particle-halo" />
+          <circle r="3.5" class="iso-particle-core" />
+        </g>
+      </svg>
+    ))}
+  </div>
+
+  <div class="cbox corners -mt-px flex min-h-[112px] w-full flex-col justify-between gap-4 p-4 sm:flex-row sm:items-center">
+    <div
+      class="text-in flex max-w-[64ch] flex-col gap-1.5"
+      data-iso-panel
+      aria-live="polite"
+      data-idle-title={idleTitle}
+      data-idle-body={idleBody}
+    >
+      <p class="font-medium text-text-primary">{idleTitle}</p>
+      <p class="text-[14px] text-text-tertiary">{idleBody}</p>
+    </div>
+    <slot />
+  </div>
+</div>
+
+<style is:global>
+  .iso-node {
+    cursor: pointer;
+    outline: none;
+  }
+  .iso-node .iso-top {
+    transition:
+      fill 300ms,
+      stroke 300ms;
+  }
+  .iso-edge {
+    transition:
+      opacity 300ms,
+      stroke 300ms,
+      stroke-width 300ms;
+  }
+  .iso-dim .iso-edge:not(.is-hot) {
+    opacity: 0.3;
+  }
+  .iso-floor {
+    fill: color-mix(in oklab, var(--surface-1) 55%, transparent);
+    stroke: var(--line-divider);
+    stroke-dasharray: 4 4;
+  }
+  .iso-edge {
+    fill: none;
+    stroke: var(--line-divider);
+    stroke-width: 1.25;
+    stroke-linejoin: round;
+  }
+  .iso-edge.is-hot {
+    stroke: var(--accent-hot, var(--line-strong));
+    stroke-width: 2;
+  }
+  .iso-shadow {
+    fill: var(--text-primary);
+    opacity: 0.06;
+    transition: opacity 400ms;
+  }
+  .iso-node.is-active .iso-shadow {
+    opacity: 0.12;
+  }
+  .iso-top,
+  .iso-left,
+  .iso-right {
+    stroke: var(--line-strong);
+    stroke-width: 1;
+    stroke-linejoin: round;
+    stroke-opacity: 0.7;
+  }
+  .iso-top {
+    fill: var(--surface-bg);
+  }
+  .iso-left {
+    fill: var(--surface-1);
+  }
+  .iso-right {
+    fill: var(--surface-2);
+  }
+  .iso-node.is-pulse .iso-top {
+    fill: color-mix(in oklab, var(--accent) 16%, var(--surface-bg));
+  }
+  .iso-node.is-active .iso-top {
+    fill: color-mix(in oklab, var(--accent) 24%, var(--surface-bg));
+    stroke: var(--accent);
+    stroke-opacity: 1;
+  }
+  .iso-node.is-active .iso-left {
+    fill: color-mix(in oklab, var(--accent) 10%, var(--surface-1));
+  }
+  .iso-node.is-active .iso-right {
+    fill: color-mix(in oklab, var(--accent) 14%, var(--surface-2));
+  }
+  .iso-icon {
+    fill: none;
+    stroke: var(--accent);
+    stroke-width: 1.75;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+  .iso-label {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    fill: var(--text-tertiary);
+    transition: fill 200ms;
+  }
+  .iso-label.is-active {
+    fill: var(--text-primary);
+  }
+  .iso-labels {
+    pointer-events: none;
+  }
+  .iso-node:focus-visible .iso-top {
+    stroke: var(--text-link);
+    stroke-width: 2;
+  }
+  .iso-particle-core {
+    fill: var(--p-color, var(--text-primary));
+  }
+  .iso-particle-halo {
+    fill: var(--p-color, var(--text-primary));
+    opacity: 0.18;
+  }
+  .iso-dim .iso-node:not(.is-active) {
+    opacity: 0.55;
+    transition: opacity 300ms;
+  }
+  .iso-node {
+    transition: opacity 300ms;
+  }
+</style>
+
+<script>
+  import { initIsoDiagrams } from '../../scripts/iso';
+  initIsoDiagrams();
+</script>

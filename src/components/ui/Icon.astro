@@ -1,0 +1,39 @@
+---
+import { brandInner, lucideInner } from '../../lib/icons';
+
+interface Props {
+  name: string;
+  brand?: boolean;
+  size?: number;
+  class?: string;
+  strokeWidth?: number;
+}
+const { name, brand = false, size = 16, class: cls, strokeWidth = 1.5 } = Astro.props;
+const body = brand ? brandInner(name) : lucideInner(name);
+---
+
+{brand ? (
+  <svg
+    class={cls}
+    width={size}
+    height={size}
+    viewBox="0 0 24 24"
+    fill="currentColor"
+    aria-hidden="true"
+    set:html={body}
+  />
+) : (
+  <svg
+    class={cls}
+    width={size}
+    height={size}
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    stroke-width={strokeWidth}
+    stroke-linecap="round"
+    stroke-linejoin="round"
+    aria-hidden="true"
+    set:html={body}
+  />
+)}

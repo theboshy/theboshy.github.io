@@ -1,0 +1,97 @@
+/* ── Buttons ───────────────────────────────────────────────────── */
+.btn-wrap {
+  position: relative;
+  display: inline-flex;
+  padding: 4px;
+}
+.btn-wrap::before {
+  --s: 6px;
+  --w: 1px;
+  inset: 0;
+}
+.btn-wrap:hover::before,
+.btn-wrap:focus-within::before {
+  opacity: 1;
+}
+.btn {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  height: 32px;
+  padding-inline: 11px;
+  border: 1px solid var(--line-structure);
+  border-radius: 2px;
+  background: var(--surface-bg);
+  color: var(--text-secondary);
+  box-shadow: var(--shadow-button);
+  font-size: 12.5px;
+  font-weight: 450;
+  letter-spacing: -0.06px;
+  text-decoration: none;
+  white-space: nowrap;
+  cursor: pointer;
+  transition:
+    border-color var(--dur-hover),
+    transform 100ms;
+  overflow: hidden;
+}
+.btn:hover,
+.btn-wrap:hover .btn {
+  border-color: var(--line-strong);
+}
+.btn:active {
+  transform: translateY(1px);
+  box-shadow: none;
+}
+.btn svg {
+  width: 14px;
+  height: 14px;
+}
+.btn-primary {
+  background: var(--cta);
+  color: #222220;
+  border-color: #404039;
+}
+
+/* border-beam: a spot of light travelling around the border */
+.beam {
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  pointer-events: none;
+  mask:
+    linear-gradient(#000 0 0) content-box exclude,
+    linear-gradient(#000 0 0);
+  padding: 1px;
+}
+.beam::after {
+  content: '';
+  position: absolute;
+  width: 36px;
+  aspect-ratio: 1;
+  background: radial-gradient(circle, #fff 0%, #fffbe0 30%, transparent 70%);
+  offset-path: rect(0 auto auto 0 round 2px);
+  offset-anchor: center;
+  animation: border-beam 6s linear infinite;
+}
+@keyframes border-beam {
+  to {
+    offset-distance: 100%;
+  }
+}
+
+/* ── Chips / badges ────────────────────────────────────────────── */
+.chip {
+  display: inline-flex;
+  align-items: center;
+  height: 22px;
+  padding-inline: 7px;
+  border: 1px solid var(--line-structure);
+  border-radius: 2px;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--text-tertiary);
+  background: var(--surface-bg);
+  white-space: nowrap;
+}
